@@ -1,0 +1,19 @@
+spring:
+  #  liquibase:
+  datasource:
+    username: postgres
+    url: jdbc:postgresql://localhost:5433/ms_auth
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    open-in-view: false
+
+  data:
+    mongodb:
+      uri: mongodb://mongo:mongo@localhost:27017/ms_auth?authSource=admin
