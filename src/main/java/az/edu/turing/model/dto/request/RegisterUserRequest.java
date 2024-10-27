@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 
 public record RegisterUserRequest(
+
         @NotBlank(message = "Name must not be empty")
         String name,
 

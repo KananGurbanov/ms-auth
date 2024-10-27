@@ -24,6 +24,7 @@ import java.util.List;
 @Table(name = "users")
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserEntity implements UserDetails {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;

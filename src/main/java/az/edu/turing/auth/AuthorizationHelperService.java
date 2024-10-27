@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class AuthorizationHelperService {
+
     private final JwtService jwtService;
 
     public Long getUserId(String auth) {

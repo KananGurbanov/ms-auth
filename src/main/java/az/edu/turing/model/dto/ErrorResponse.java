@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 
 @Builder
 public record ErrorResponse(
+
         Integer status,
         String error,
         String errorDetail,

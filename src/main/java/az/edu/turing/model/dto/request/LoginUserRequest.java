@@ -6,6 +6,7 @@ import lombok.Builder;
 
 @Builder
 public record LoginUserRequest(
+
         @Email(message = "Email is not valid")
         String email,
 
