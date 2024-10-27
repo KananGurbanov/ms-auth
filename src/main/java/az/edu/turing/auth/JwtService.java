@@ -88,8 +88,6 @@ public class JwtService {
                     .getBody();
         } catch (ExpiredJwtException e) {
             throw new RuntimeException("Token has expired", e);
-        } catch (SignatureException e) {
-            throw new RuntimeException("Invalid token signature", e);
         } catch (MalformedJwtException e) {
             throw new RuntimeException("Malformed token", e);
         }catch (JwtException e) {
