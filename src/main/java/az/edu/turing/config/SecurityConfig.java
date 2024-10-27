@@ -42,8 +42,6 @@ public class SecurityConfig {
 
     private final JwtService jwtService;
 
-//    private final LogoutHandler logoutHandler;
-
     @Bean
     public UserDetailsService userDetailsService() {
         return id -> userRepository.findById(Long.parseLong(id))
@@ -74,11 +72,6 @@ public class SecurityConfig {
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
                 .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
-//                .logout(logout ->
-//                        logout.logoutUrl("/api/v1/auth/logout")
-//                                .addLogoutHandler(logoutHandler)
-//                                .logoutSuccessHandler((request, response, authentication) -> SecurityContextHolder.clearContext())
-//                );
 
         return http.build();
     }

@@ -32,7 +32,7 @@ public class AuthService {
     private final RedisTemplate<String, String> redisTemplate;
     private final AuthenticationManager authenticationManager;
 
-    public void register(RegisterUserRequest registerUserRequest) {
+    public void register(final RegisterUserRequest registerUserRequest) {
         if (userRepository.existsByEmail(registerUserRequest.email())) {
             throw new BadRequestException(ERR_02.getErrorDescription(), ERR_02.getErrorCode());
         }
@@ -47,8 +47,8 @@ public class AuthService {
         log.info("Registered user with id: {}", savedUser.getId());
     }
 
-    public JwtResponse login(LoginUserRequest loginUserRequest) {
-        UserEntity userEntity = userRepository.findByEmail(loginUserRequest.email())
+    public JwtResponse login(final LoginUserRequest loginUserRequest) {
+        final UserEntity userEntity = userRepository.findByEmail(loginUserRequest.email())
                 .orElseThrow(() -> new NotFoundException(ERR_03.getErrorDescription(), ERR_03.getErrorCode()));
 
         if (Boolean.TRUE.equals(redisTemplate.hasKey("refresh:" + userEntity.getId()))) {
@@ -62,8 +62,8 @@ public class AuthService {
                 )
         );
 
-        var jwtToken = jwtService.generateToken(userEntity.getId().toString());
-        var refreshToken = jwtService.generateRefreshToken(userEntity.getId().toString());
+        final var jwtToken = jwtService.generateToken(userEntity.getId().toString());
+        final var refreshToken = jwtService.generateRefreshToken(userEntity.getId().toString());
 
         redisTemplate.opsForValue().set("refresh:" + userEntity.getId(), refreshToken, 1, TimeUnit.DAYS);
 
@@ -73,14 +73,14 @@ public class AuthService {
                 .build();
     }
 
-    public void logout(Long userId, String accessToken) {
+    public void logout(final Long userId, final String accessToken) {
         if (jwtService.isTokenExpired(accessToken)) {
             throw new BadRequestException(ERR_05.getErrorDescription(), ERR_05.getErrorCode());
         }
         redisTemplate.delete("refresh:" + userId);
     }
 
-    public JwtResponse refresh(Long userId, String token) {
+    public JwtResponse refresh(final Long userId, final String token) {
         userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException(ERR_03.getErrorCode(), ERR_03.getErrorDescription()));
 
@@ -91,8 +91,8 @@ public class AuthService {
             throw new BadRequestException(ERR_05.getErrorDescription(), ERR_05.getErrorCode());
         }
 
-        String newAccessToken = jwtService.generateToken(userId.toString());
-        String newRefreshToken = jwtService.generateRefreshToken(userId.toString());
+        final String newAccessToken = jwtService.generateToken(userId.toString());
+        final String newRefreshToken = jwtService.generateRefreshToken(userId.toString());
         redisTemplate.opsForValue().set("refresh:" + userId, newRefreshToken, 1, TimeUnit.DAYS);
 
         return JwtResponse.builder()
