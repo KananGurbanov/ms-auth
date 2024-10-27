@@ -1,8 +1,7 @@
 spring:
-  #  liquibase:
   datasource:
-    username: postgres
     url: jdbc:postgresql://${HOST:localhost}:${PORT:5433}/${DATABASE:ms_auth}
+    username: postgres
     password: postgres
     driver-class-name: org.postgresql.Driver
   jpa:
@@ -18,4 +17,3 @@ spring:
     redis:
       host: localhost
       port: 6379
-

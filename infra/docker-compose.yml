@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  app:
+    image: ms-auth  # Replace with your built image name
+    container_name: ms-auth
+    build:
+      context: ..
+      dockerfile: Dockerfile # Path to your Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/ms_auth  # Replace with your database name
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      SPRING_REDIS_HOST: redis
+      SPRING_REDIS_PORT: 6378
+    depends_on:
+      - db
+      - redis
+
+  db:
+    image: postgres:latest
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: ms_auth  # Replace with your desired database name
+    ports:
+      - "5434:5432"  # Maps PostgreSQL container's port to host
+
+  redis:
+    image: redis:latest
+    restart: always
+    ports:
+      - "6378:6379"  # Maps Redis container's port to host
