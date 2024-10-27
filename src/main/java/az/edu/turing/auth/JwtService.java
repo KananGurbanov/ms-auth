@@ -3,6 +3,7 @@ package az.edu.turing.auth;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
@@ -14,9 +15,14 @@ import java.util.function.Function;
 @Service
 public class JwtService {
 
-    private static final String secretKey = "082dd5eb9242b59f90eaeeef10e148fe13209a12f8162170de3cd452453ad4eb";
-    private static final long expirationTime = 86400000;
-    private static final long refreshTokenExpirationTime = 14 * 86400000;
+    @Value("${application.security.secret-key}")
+    private String secretKey;
+
+    @Value("${application.security.jwt.expiration}")
+    private long expirationTime;
+
+    @Value("${application.security.jwt.refresh-token.expiration}")
+    private long refreshTokenExpirationTime;
 
     public String extractUserId(String token) {
         return extractClaim(token, Claims::getSubject);
@@ -64,7 +70,7 @@ public class JwtService {
         return (id.equals(userId.toString())) && !isTokenExpired(token);
     }
 
-    private boolean isTokenExpired(String token) {
+    public boolean isTokenExpired(String token) {
         return extractExpiration(token).before(new Date());
     }
 
