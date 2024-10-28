@@ -21,7 +21,6 @@ public class CustomExceptionHandler {
     public ResponseEntity<ErrorResponse> handleBadRequestException(BadRequestException e,
                                                                    WebRequest request) {
         log.error(ERROR_LOG, e);
-
         return buildErrorResponse(HttpStatus.BAD_REQUEST, e.getCode(), e.getMessage(), getPath(request));
     }
 
