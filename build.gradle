@@ -1,12 +1,12 @@
 buildscript {
     repositories {
-        mavenCentral() // This is commonly used for dependencies
+        mavenCentral()
         maven {
-            url "https://plugins.gradle.org/m2/" // Include the Gradle Plugin Portal
+            url "https://plugins.gradle.org/m2/"
         }
     }
     dependencies {
-        classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:5.1.0.4882" // SonarQube plugin dependency
+        classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:5.1.0.4882" 
     }
 }
 

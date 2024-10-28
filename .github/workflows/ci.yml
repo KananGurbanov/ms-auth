@@ -24,8 +24,3 @@ jobs:
 
       - name: Build with Gradle
         run: ./gradlew build
-
-      - name: Run SonarQube Analysis
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }} # Store your SonarQube token in GitHub secrets
-        run: ./gradlew sonarqube -Dsonar.login=$SONAR_TOKEN
