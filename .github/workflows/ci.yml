@@ -12,17 +12,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-    services:
-      sonarqube:
-        image: sonarqube
-        ports:
-          - 9000:9000
-        options: >-
-          --health-cmd="curl -f http://localhost:9000/api/system/health"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=5
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -33,14 +22,10 @@ jobs:
           java-version: '21'
           distribution: 'adopt'
 
-      - name: Set executable permission for gradlew
-        run: chmod +x gradlew
-
       - name: Build with Gradle
         run: ./gradlew build
 
       - name: Run SonarQube Analysis
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }} # Store your SonarQube token in GitHub secrets
-          SONAR_HOST_URL: "http://localhost:9000"
-        run: ./gradlew sonarqube -Dsonar.login=$SONAR_TOKEN -Dsonar.host.url=$SONAR_HOST_URL
+        run: ./gradlew sonarqube -Dsonar.login=$SONAR_TOKEN
