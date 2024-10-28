@@ -62,7 +62,7 @@ apply plugin: "org.sonarqube" // Apply the SonarQube plugin
 sonarqube {
     properties {
         property "sonar.projectKey", "my_project_key" // Replace with your project key
-        property "sonar.host.url", "http://localhost:9000" // Adjust if necessary
+        property "sonar.host.url", "http://192.168.1.7:9000" // Adjust if necessary
         property "sonar.token", "squ_18075d09ad65a1c0258e4cb80b043877a8e67669" // Use if authentication is needed
         property "sonar.sourceEncoding", "UTF-8"
         property "sonar.sources", "src/main/java"
