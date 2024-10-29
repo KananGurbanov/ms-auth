@@ -3,6 +3,6 @@ spring:
     active: db, security
 
 
-logging:
-  level:
-    org.springframework: trace
+#logging:
+#  level:
+#    org.springframework: trace
