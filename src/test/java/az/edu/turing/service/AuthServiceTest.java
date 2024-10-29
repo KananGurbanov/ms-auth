@@ -7,7 +7,6 @@ import az.edu.turing.exceptions.BadRequestException;
 import az.edu.turing.exceptions.NotFoundException;
 import az.edu.turing.model.dto.request.LoginUserRequest;
 import az.edu.turing.model.dto.request.RegisterUserRequest;
-import az.edu.turing.model.dto.response.JwtResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,18 +15,17 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Optional;
-import java.util.concurrent.TimeUnit;
 
 import static az.edu.turing.model.enums.Error.ERR_02;
 import static az.edu.turing.model.enums.Error.ERR_03;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class AuthServiceTest {
