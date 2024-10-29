@@ -20,3 +20,4 @@ build:
       - build/libs/*.jar
   only:
     - main
+
