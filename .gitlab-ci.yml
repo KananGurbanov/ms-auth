@@ -39,4 +39,3 @@ build:
 #    - docker build -t ms-auth-java-app .
 #    #- docker tag ms-auth-java-app <url>
     #- docker push <url>
-
