@@ -3,7 +3,6 @@ stages:
   - build
 #  - release
 
-
 test:
   stage: test
   image: gradle:latest
