@@ -1,12 +1,12 @@
 stages:
   - test
   - build
-#  - release
+  # - release
 
 test:
   stage: test
   image: gradle:latest
-  on:
+  only:
     - main
   before_script:
     - gradle --version
@@ -16,7 +16,7 @@ test:
 build:
   stage: build
   image: gradle:latest
-  on:
+  only:
     - main
   before_script:
     - gradle --version
@@ -26,16 +26,16 @@ build:
     paths:
       - build/libs/*.jar
 
-    #release:
-    #  stage: release
-    #  on:
-    #    - main
-    #  image: docker:24.0.5
-    #  services:
-    #    - docker:24.0.5-dind
-    #  before_script:
-    #    - docker info
-    #  script:
-    #    - docker build -t ms-auth-java-app .
-    #    #- docker tag ms-auth-java-app <url>
-    #- docker push <url>
+# release:
+#   stage: release
+#   only:
+#     - main
+#   image: docker:24.0.5
+#   services:
+#     - docker:24.0.5-dind
+#   before_script:
+#     - docker info
+#   script:
+#     - docker build -t ms-auth-java-app .
+#     # - docker tag ms-auth-java-app <url>
+#     # - docker push <url>
