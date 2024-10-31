@@ -14,7 +14,7 @@ services:
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: postgres
       SPRING_REDIS_HOST: redis
-      SPRING_REDIS_PORT: 6378
+      SPRING_REDIS_PORT: 6379
     depends_on:
       - db
       - redis
@@ -27,10 +27,18 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: ms_auth
     ports:
-      - "5434:5432"
+      - "5432:5432"
 
   redis:
     image: redis:latest
     restart: always
     ports:
-      - "6378:6379"
+      - "6379:6379"
+
+  vault:
+    container_name: "guide-vault"
+    image: hashicorp/vault:latest
+    environment:
+      VAULT_DEV_ROOT_TOKEN_ID: "00000000-0000-0000-0000-000000000000"
+    ports:
+      - "8200:8200"
