@@ -1,7 +1,0 @@
-application:
-  security:
-    secret-key: 082dd5eb9242b59f90eaeeef10e148fe13209a12f8162170de3cd452453ad4eb
-    jwt:
-      expiration: 900000
-      refresh-token:
-        expiration: 86400000
