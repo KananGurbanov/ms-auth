@@ -3,6 +3,7 @@ package az.edu.turing.auth;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +14,7 @@ import java.util.Map;
 import java.util.function.Function;
 
 @Service
+@Slf4j
 public class JwtService {
 
     @Value("${application.security.secret-key}")
@@ -80,6 +82,7 @@ public class JwtService {
 
     private Claims extractAllClaims(String token) {
         try {
+            log.debug("JWT Token: {}", token);
             return Jwts
                     .parserBuilder()
                     .setSigningKey(getSignInKey())
@@ -88,9 +91,15 @@ public class JwtService {
                     .getBody();
         } catch (ExpiredJwtException e) {
             throw new RuntimeException("Token has expired", e);
+        } catch (UnsupportedJwtException e) {
+            throw new RuntimeException("Unsupported JWT token", e);
         } catch (MalformedJwtException e) {
-            throw new RuntimeException("Malformed token", e);
-        }catch (JwtException e) {
+            throw new RuntimeException("Malformed JWT token", e);
+        } catch (SignatureException e) {
+            throw new RuntimeException("Invalid JWT signature", e);
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("JWT claims string is empty", e);
+        } catch (JwtException e) {
             throw new RuntimeException("Token is invalid", e);
         }
     }
