@@ -34,7 +34,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: Build with Gradle
-        run: ./gradlew :ms-auth:assemble
+        run: ./gradlew assemble
 
   test:
     runs-on: ubuntu-latest
@@ -54,7 +54,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: Run Tests for ms-auth
-        run: ./gradlew :ms-auth:test
+        run: ./gradlew test
 
   deploy:
     runs-on: ubuntu-latest
