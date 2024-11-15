@@ -9,9 +9,11 @@ import az.edu.turing.service.AuthService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("api/v1/auth")
@@ -38,9 +40,9 @@ public class AuthenticationController {
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<String> logout(@RequestHeader("Authorization") String accessToken) {
-        Long userId = authorizationHelperService.getUserId(accessToken);
-        authService.logout(userId, accessToken);
+    public ResponseEntity<String> logout(@RequestHeader("Authorization") String authorizationHeader) {
+        String accessToken = authorizationHelperService.extractToken(authorizationHeader);
+        authService.logout(accessToken);
         return ResponseEntity.ok("Logged out successfully");
     }
 
