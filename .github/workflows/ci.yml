@@ -1,8 +1,12 @@
-name: CI Pipeline
+name: ms-auth CI/CD
+
 on:
   push:
     branches:
-      - '**'
+      - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
   build:
@@ -18,14 +22,19 @@ jobs:
           java-version: '21'
           distribution: 'adopt'
 
-      - name: Build with Gradle
-        run: ./gradlew assemble
-
-      - name: Upload Build Artifacts
-        uses: actions/upload-artifact@v4
+      - name: Cache Gradle dependencies
+        uses: actions/cache@v3
         with:
-          name: build-artifacts
-          path: build/libs/*.jar
+          path: ~/.gradle/caches
+          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            gradle-${{ runner.os }}-
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Build with Gradle
+        run: ./gradlew :ms-auth:assemble
 
   test:
     runs-on: ubuntu-latest
@@ -41,13 +50,32 @@ jobs:
           java-version: '21'
           distribution: 'adopt'
 
-      - name: Run Tests
-        run: ./gradlew test
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
 
-      - name: Upload Test Results
-        uses: actions/upload-artifact@v4
-        with:
-          name: test-results
-          path: build/test-results/test/*.xml
+      - name: Run Tests for ms-auth
+        run: ./gradlew :ms-auth:test
 
+  deploy:
+    runs-on: ubuntu-latest
+    needs: test
+    if: ${{ github.ref == 'refs/heads/main' }}
 
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install Railway CLI
+        run: curl -sSL https://railway.app/install.sh | sh
+
+      - name: Login to Railway
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+        run: railway login --token $RAILWAY_TOKEN
+
+      - name: Deploy ms-auth to Railway
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+        run: |
+          cd ms-auth
+          railway up --project-id ${{ secrets.RAILWAY_PROJECT_ID_MS_AUTH }}

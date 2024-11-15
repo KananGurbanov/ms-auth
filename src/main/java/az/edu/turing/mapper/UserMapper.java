@@ -9,5 +9,4 @@ import org.mapstruct.ReportingPolicy;
 public interface UserMapper {
 
     RetrieveUserResponse mapToDto(UserEntity userEntity);
-    RetrieveUserResponse mapToDtoUsers(UserEntity userEntity);
 }

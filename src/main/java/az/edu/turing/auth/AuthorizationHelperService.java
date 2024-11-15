@@ -16,7 +16,7 @@ public class AuthorizationHelperService {
 
     public String extractToken(String authorizationHeader) {
         if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
-            throw new IllegalArgumentException("Invalid Authorization header format.");
+            throw new IllegalArgumentException("Invalid Authorization header format!");
         }
         log.info(authorizationHeader);
         return authorizationHeader.substring(7);
@@ -27,7 +27,7 @@ public class AuthorizationHelperService {
         return Long.parseLong(userId);
     }
 
-    public void validateToken(String accessToken) {
+    public void validateAccessToken(String accessToken) {
         if (jwtService.isTokenExpired(accessToken)) {
             throw new BadRequestException(ERR_05.getErrorDescription(), ERR_05.getErrorCode());
         }

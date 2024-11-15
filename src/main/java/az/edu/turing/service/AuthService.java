@@ -11,14 +11,12 @@ import az.edu.turing.model.dto.request.RegisterUserRequest;
 import az.edu.turing.model.dto.response.JwtResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
-import java.util.concurrent.TimeUnit;
 
 import static az.edu.turing.model.enums.Error.*;
 
@@ -30,7 +28,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final UserRepository userRepository;
-    private final RedisTemplate<String, String> redisTemplate;
+    private final RedisService redisService;
     private final AuthenticationManager authenticationManager;
     private final AuthorizationHelperService authorizationHelperService;
 
@@ -53,7 +51,7 @@ public class AuthService {
         final UserEntity userEntity = userRepository.findByEmail(loginUserRequest.email())
                 .orElseThrow(() -> new NotFoundException(ERR_03.getErrorDescription(), ERR_03.getErrorCode()));
 
-        if (Boolean.TRUE.equals(redisTemplate.hasKey("refresh:" + userEntity.getId()))) {
+        if (Boolean.TRUE.equals(redisService.tokenExists(userEntity.getId()))) {
             throw new BadRequestException(ERR_04.getErrorDescription(), ERR_04.getErrorCode());
         }
 
@@ -67,7 +65,7 @@ public class AuthService {
         final var jwtToken = jwtService.generateToken(userEntity.getId().toString());
         final var refreshToken = jwtService.generateRefreshToken(userEntity.getId().toString());
 
-        redisTemplate.opsForValue().set("refresh:" + userEntity.getId(), refreshToken, 1, TimeUnit.DAYS);
+        redisService.saveToken(userEntity.getId(), refreshToken);
 
         return JwtResponse.builder()
                 .accessToken(jwtToken)
@@ -76,25 +74,31 @@ public class AuthService {
     }
 
     public void logout(final String accessToken) {
-        authorizationHelperService.validateToken(accessToken);
+        authorizationHelperService.validateAccessToken(accessToken);
         Long userId = authorizationHelperService.getUserId(accessToken);
-        redisTemplate.delete("refresh:" + userId);
+
+        if (Boolean.FALSE.equals(redisService.tokenExists(userId))) {
+            throw new NotFoundException(ERR_07.getErrorDescription(), ERR_07.getErrorCode());
+        }
+        redisService.deleteToken(userId);
     }
 
-    public JwtResponse refresh(final Long userId, final String token) {
-        userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException(ERR_03.getErrorCode(), ERR_03.getErrorDescription()));
+    public JwtResponse refresh(final String token) {
+        authorizationHelperService.validateAccessToken(token);
+        Long userId = authorizationHelperService.getUserId(token);
 
-        final String refreshToken = token.substring(7);
+        if (Boolean.FALSE.equals(redisService.tokenExists(userId))) {
+            throw new NotFoundException(ERR_07.getErrorDescription(), ERR_07.getErrorCode());
+        }
 
-        final String storedRefreshToken = redisTemplate.opsForValue().get("refresh:" + userId);
-        if (!Objects.equals(storedRefreshToken, refreshToken) || jwtService.isTokenExpired(refreshToken)) {
+        final String storedRefreshToken = redisService.getToken(userId);
+        if (!Objects.equals(storedRefreshToken, token) || jwtService.isTokenExpired(token)) {
             throw new BadRequestException(ERR_05.getErrorDescription(), ERR_05.getErrorCode());
         }
 
         final String newAccessToken = jwtService.generateToken(userId.toString());
         final String newRefreshToken = jwtService.generateRefreshToken(userId.toString());
-        redisTemplate.opsForValue().set("refresh:" + userId, newRefreshToken, 1, TimeUnit.DAYS);
+        redisService.updateToken(userId, newRefreshToken);
 
         return JwtResponse.builder()
                 .accessToken(newAccessToken)

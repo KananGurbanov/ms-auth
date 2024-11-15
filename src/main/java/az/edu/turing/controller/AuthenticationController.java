@@ -48,8 +48,8 @@ public class AuthenticationController {
 
     @PostMapping("/refresh")
     public ResponseEntity<RestResponse<JwtResponse>> refresh(@RequestHeader("Authorization") String refreshToken) {
-        Long userId = authorizationHelperService.getUserId(refreshToken);
-        JwtResponse refresh = authService.refresh(userId, refreshToken);
+        String token = authorizationHelperService.extractToken(refreshToken);
+        JwtResponse refresh = authService.refresh(token);
         RestResponse<JwtResponse> response = RestResponse.<JwtResponse>builder()
                 .data(refresh)
                 .status("SUCCESS")
