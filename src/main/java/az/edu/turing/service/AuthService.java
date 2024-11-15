@@ -1,5 +1,6 @@
 package az.edu.turing.service;
 
+import az.edu.turing.auth.AuthorizationHelperService;
 import az.edu.turing.auth.JwtService;
 import az.edu.turing.dao.entity.UserEntity;
 import az.edu.turing.dao.repository.UserRepository;
@@ -31,6 +32,7 @@ public class AuthService {
     private final UserRepository userRepository;
     private final RedisTemplate<String, String> redisTemplate;
     private final AuthenticationManager authenticationManager;
+    private final AuthorizationHelperService authorizationHelperService;
 
     public void register(final RegisterUserRequest registerUserRequest) {
         if (userRepository.existsByEmail(registerUserRequest.email())) {
@@ -73,10 +75,9 @@ public class AuthService {
                 .build();
     }
 
-    public void logout(final Long userId, final String accessToken) {
-        if (jwtService.isTokenExpired(accessToken)) {
-            throw new BadRequestException(ERR_05.getErrorDescription(), ERR_05.getErrorCode());
-        }
+    public void logout(final String accessToken) {
+        authorizationHelperService.validateToken(accessToken);
+        Long userId = authorizationHelperService.getUserId(accessToken);
         redisTemplate.delete("refresh:" + userId);
     }
 
