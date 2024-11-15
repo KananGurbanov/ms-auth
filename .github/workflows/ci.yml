@@ -75,5 +75,6 @@ jobs:
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
         run: |
-          cd C:\Users\knanq\IdeaProjects\turing\ms-auth
+          # Ensure we are in the root of the repository
+          cd $GITHUB_WORKSPACE
           railway up --project ${{ secrets.RAILWAY_PROJECT_ID_MS_AUTH }} --token $RAILWAY_TOKEN
