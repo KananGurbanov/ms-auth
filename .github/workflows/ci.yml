@@ -1,10 +1,6 @@
-name: ms-auth CI/CD
-
+name: CI Pipeline
 on:
   push:
-    branches:
-      - main
-  pull_request:
     branches:
       - main
 
@@ -22,19 +18,14 @@ jobs:
           java-version: '21'
           distribution: 'adopt'
 
-      - name: Cache Gradle dependencies
-        uses: actions/cache@v3
-        with:
-          path: ~/.gradle/caches
-          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-            gradle-${{ runner.os }}-
-
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
-
       - name: Build with Gradle
         run: ./gradlew assemble
+
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifacts
+          path: build/libs/*.jar
 
   test:
     runs-on: ubuntu-latest
@@ -50,31 +41,13 @@ jobs:
           java-version: '21'
           distribution: 'adopt'
 
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
-
-      - name: Run Tests for ms-auth
+      - name: Run Tests
         run: ./gradlew test
 
-  deploy:
-    runs-on: ubuntu-latest
-    needs: test
-    if: ${{ github.ref == 'refs/heads/main' }}
+      - name: Upload Test Results
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: build/test-results/test/*.xml
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
 
-      - name: Install Railway CLI
-        run: |
-          curl -sSL https://railway.app/install.sh | sh
-          echo "export PATH=\$HOME/.railway/bin:\$PATH" >> $GITHUB_ENV
-          source $GITHUB_ENV
-
-      - name: Deploy ms-auth to Railway
-        env:
-          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
-        run: |
-          # Ensure we are in the root of the repository
-          cd $GITHUB_WORKSPACE
-          railway up -- --project ${{ secrets.RAILWAY_PROJECT_ID_MS_AUTH }} --token $RAILWAY_TOKEN
