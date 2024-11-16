@@ -12,8 +12,8 @@ spring:
 
   data:
     redis:
-      host: junction.proxy.rlwy.net
-      port: 46072
+      host: localhost
+      port: 6379
 
   liquibase:
     change-log: classpath:db.changelog/db.changelog.yaml
