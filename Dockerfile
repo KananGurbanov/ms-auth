@@ -1,5 +1,5 @@
 # Stage 1: Build the application using Gradle
-FROM gradle:8.0-jdk21 AS build
+FROM gradle:8.0-jdk17 AS build
 WORKDIR /app
 
 # Copy build.gradle and other required files for Gradle build
