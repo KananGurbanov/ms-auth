@@ -3,7 +3,7 @@ FROM gradle:8.0 AS build
 WORKDIR /app
 
 # Copy build.gradle and other required files for Gradle build
-COPY build.gradle settings.gradle gradlew gradle/ ./
+COPY build.gradle settings.gradle gradlew gradle/wrapper ./gradle/
 
 # Copy source files
 COPY src src
