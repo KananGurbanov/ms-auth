@@ -3,17 +3,18 @@ spring:
     name: ms-auth
 
   datasource:
-    url: jdbc:postgresql://autorack.proxy.rlwy.net:27243/railway
-    username: postgres
-    password: EimJdsvhfMcRibSvGjOlmuKTjhdelLNU
+#    url: ${DB_URL:jdbc:postgresql://autorack.proxy.rlwy.net:27243/railway}
+    url: ${DB_URL:jdbc:postgresql://dpg-csqv7g23esus738545dg-a.oregon-postgres.render.com:5432/ms_auth}
+    username: ${DB_USERNAME:unitech}
+    password: ${DB_PASSWORD:oiZrUfzXVRngykZgP3hQhiL6Cleuhbbs}
   jpa:
     hibernate:
       ddl-auto: validate
 
   data:
     redis:
-      host: localhost
-      port: 6379
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
 
   liquibase:
     change-log: classpath:db.changelog/db.changelog.yaml
