@@ -3,14 +3,13 @@ FROM gradle:8.0 AS build
 WORKDIR /app
 
 # Copy build.gradle and other required files for Gradle build
-COPY build.gradle settings.gradle ./
-COPY gradle gradle
+COPY build.gradle settings.gradle gradlew gradle/ ./
 
 # Copy source files
 COPY src src
 
 # Run the Gradle build
-RUN gradle clean build -x test
+RUN ./gradlew clean build -x test
 
 # Stage 2: Create the final Docker image using OpenJDK 21
 FROM openjdk:21-jdk
