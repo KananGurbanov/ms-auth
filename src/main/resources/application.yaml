@@ -3,10 +3,9 @@ spring:
     name: ms-auth
 
   datasource:
-#    url: ${DB_URL:jdbc:postgresql://autorack.proxy.rlwy.net:27243/railway}
-    url: ${DB_URL:jdbc:postgresql://dpg-csqv7g23esus738545dg-a.oregon-postgres.render.com:5432/ms_auth}
-    username: ${DB_USERNAME:unitech}
-    password: ${DB_PASSWORD:oiZrUfzXVRngykZgP3hQhiL6Cleuhbbs}
+    url: ${DB_URL:jdbc:postgresql://localhost:5433/ms_auth}
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:postgres}
   jpa:
     hibernate:
       ddl-auto: validate
