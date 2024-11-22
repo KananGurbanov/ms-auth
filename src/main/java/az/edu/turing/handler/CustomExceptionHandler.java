@@ -43,7 +43,7 @@ public class CustomExceptionHandler {
                                                                  WebRequest request) {
         log.error(ERROR_LOG, e);
 
-        return buildErrorResponse(HttpStatus.BAD_REQUEST, ERR_08.getErrorCode(), ERR_08.getErrorDescription(), getPath(request));
+        return buildErrorResponse(HttpStatus.BAD_REQUEST, ERR_08.getErrorCode(), e.getMessage(), getPath(request));
     }
 
     private ResponseEntity<ErrorResponse> buildErrorResponse(HttpStatus status,
