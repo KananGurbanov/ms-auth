@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
 
+import java.time.LocalDateTime;
+
 import static az.edu.turing.model.enums.Error.ERR_08;
 
 @RestControllerAdvice
@@ -56,6 +58,7 @@ public class CustomExceptionHandler {
                         .errorDetail(errorMessage)
                         .path(path)
                         .status(status.value())
+                        .timestamp(LocalDateTime.now())
                         .build());
     }
 
