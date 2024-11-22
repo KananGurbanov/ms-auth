@@ -13,7 +13,9 @@ public enum Error {
     ERR_04("ERR_04", "Already logged in. Logout to login again!"),
     ERR_05("ERR_05", "Invalid or expired token!"),
     ERR_06("ERR_06", "User does not exist!"),
-    ERR_07("ERR_07", "You have not logged in or token is expired!");
+    ERR_07("ERR_07", "You have not logged in or token is expired!"),
+    ERR_08("ERR_08", "Method argument is not valid!");
+
 
 
     private final String errorCode;

@@ -3,13 +3,17 @@ package az.edu.turing.handler;
 import az.edu.turing.exceptions.BadRequestException;
 import az.edu.turing.exceptions.NotFoundException;
 import az.edu.turing.model.dto.ErrorResponse;
+import az.edu.turing.model.enums.Error;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
+
+import static az.edu.turing.model.enums.Error.ERR_08;
 
 @RestControllerAdvice
 @Slf4j
@@ -30,6 +34,16 @@ public class CustomExceptionHandler {
         log.error(ERROR_LOG, e);
 
         return buildErrorResponse(HttpStatus.NOT_FOUND, e.getCode(), e.getMessage(), getPath(request));
+    }
+
+
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ErrorResponse> handleNotFoundException(MethodArgumentNotValidException e,
+                                                                 WebRequest request) {
+        log.error(ERROR_LOG, e);
+
+        return buildErrorResponse(HttpStatus.BAD_REQUEST, ERR_08.getErrorCode(), ERR_08.getErrorDescription(), getPath(request));
     }
 
     private ResponseEntity<ErrorResponse> buildErrorResponse(HttpStatus status,
