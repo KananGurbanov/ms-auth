@@ -36,3 +36,10 @@ application:
       expiration: 900000
       refresh-token:
         expiration: 86400000
+
+
+feign:
+  client:
+    config:
+      ms-transfer-client:
+        url: https://ms-transfer-dev.up.railway.app/api/v1/accounts

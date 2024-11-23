@@ -4,7 +4,7 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 
-@FeignClient(name = "ms-transfer", url = "http://localhost:8082/api/v1/accounts")
+@FeignClient(name = "ms-transfer", url = "${feign.client.config.ms-transfer-client.url}")
 public interface MsTransferClient {
 
     @DeleteMapping
