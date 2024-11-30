@@ -7,5 +7,9 @@ import lombok.Builder;
 public record UpdateUserRequest(
 
         @NotBlank
-        String password) {
+        String oldPassword,
+
+
+        @NotBlank
+        String newPassword) {
 }

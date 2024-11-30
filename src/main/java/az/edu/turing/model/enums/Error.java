@@ -14,7 +14,8 @@ public enum Error {
     ERR_05("ERR_05", "Invalid or expired token!"),
     ERR_06("ERR_06", "User does not exist!"),
     ERR_07("ERR_07", "You have not logged in or token is expired!"),
-    ERR_08("ERR_08", "Method argument is not valid!");
+    ERR_08("ERR_08", "Method argument is not valid!"),
+    ERR_09("ERR_09", "Old password is not correct!");
 
 
 

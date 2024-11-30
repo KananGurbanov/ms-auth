@@ -4,6 +4,7 @@ import az.edu.turing.auth.AuthorizationHelperService;
 import az.edu.turing.clients.MsTransferClient;
 import az.edu.turing.dao.entity.UserEntity;
 import az.edu.turing.dao.repository.UserRepository;
+import az.edu.turing.exceptions.BadRequestException;
 import az.edu.turing.exceptions.NotFoundException;
 import az.edu.turing.mapper.UserMapper;
 import az.edu.turing.model.dto.request.UpdateUserRequest;
@@ -15,6 +16,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import static az.edu.turing.model.enums.Error.ERR_06;
+import static az.edu.turing.model.enums.Error.ERR_09;
 
 @Service
 @RequiredArgsConstructor
@@ -60,7 +62,12 @@ public class UserService {
         UserEntity userEntity = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException(ERR_06.getErrorDescription(), ERR_06.getErrorCode()));
 
-        userEntity.setPassword(passwordEncoder.encode(updateUserRequest.password()));
-        return userMapper.mapToDto(userRepository.save(userEntity));
+        if (passwordEncoder.matches(updateUserRequest.oldPassword(), userEntity.getPassword())) {
+            userEntity.setPassword(passwordEncoder.encode(updateUserRequest.newPassword()));
+            return userMapper.mapToDto(userRepository.save(userEntity));
+        }
+        else {
+            throw new BadRequestException(ERR_09.getErrorDescription(), ERR_09.getErrorCode());
+        }
     }
 }
