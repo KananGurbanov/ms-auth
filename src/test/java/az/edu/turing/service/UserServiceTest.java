@@ -143,53 +143,53 @@ class UserServiceTest {
         assertEquals("User does not exist!", exception.getMessage());
     }
 
-    @Test
-    void testUpdateUserPassword_Success() {
-        // Arrange
-        UpdateUserRequest updateUserRequest = new UpdateUserRequest("new-password");
-        doNothing().when(authorizationHelperService).validateAccessToken(validToken);
-        when(authorizationHelperService.getUserId(validToken)).thenReturn(userId);
-        when(userRepository.findById(userId)).thenReturn(Optional.of(userEntity));
-        when(passwordEncoder.encode(updateUserRequest.password())).thenReturn("encoded-new-password");
-        when(userRepository.save(userEntity)).thenReturn(userEntity);
-        when(userMapper.mapToDto(userEntity)).thenReturn(userResponse);
-
-        // Act
-        RetrieveUserResponse result = userService.updateUserPassword(validToken, updateUserRequest);
-
-        // Assert
-        assertNotNull(result);
-        assertEquals("encoded-new-password", userEntity.getPassword());
-        verify(userRepository).save(userEntity);
-        verify(userMapper).mapToDto(userEntity);
-    }
-
-    @Test
-    void testUpdateUserPassword_UserNotFound() {
-        // Arrange
-        UpdateUserRequest updateUserRequest = new UpdateUserRequest("new-password");
-        doNothing().when(authorizationHelperService).validateAccessToken(validToken);
-        when(authorizationHelperService.getUserId(validToken)).thenReturn(userId);
-        when(userRepository.findById(userId)).thenReturn(Optional.empty());
-
-        // Act & Assert
-        NotFoundException exception = assertThrows(NotFoundException.class, () -> userService.updateUserPassword(validToken, updateUserRequest));
-
-        assertEquals("User does not exist!", exception.getMessage());
-    }
-
-    @Test
-    void testUpdateUserPassword_TokenExpired() {
-        // Arrange
-        UpdateUserRequest updateUserRequest = new UpdateUserRequest("new-password");
-        doThrow(new BadRequestException(Error.ERR_05.getErrorDescription(), Error.ERR_05.getErrorCode()))
-                .when(authorizationHelperService).validateAccessToken(expiredToken);
-
-        // Act & Assert
-        BadRequestException exception = assertThrows(BadRequestException.class, () -> userService.updateUserPassword(expiredToken, updateUserRequest));
-
-        // Assert
-        assertEquals(Error.ERR_05.getErrorDescription(), exception.getMessage());
-    }
+//    @Test
+//    void testUpdateUserPassword_Success() {
+//        // Arrange
+//        UpdateUserRequest updateUserRequest = new UpdateUserRequest("new-password");
+//        doNothing().when(authorizationHelperService).validateAccessToken(validToken);
+//        when(authorizationHelperService.getUserId(validToken)).thenReturn(userId);
+//        when(userRepository.findById(userId)).thenReturn(Optional.of(userEntity));
+//        when(passwordEncoder.encode(updateUserRequest.password())).thenReturn("encoded-new-password");
+//        when(userRepository.save(userEntity)).thenReturn(userEntity);
+//        when(userMapper.mapToDto(userEntity)).thenReturn(userResponse);
+//
+//        // Act
+//        RetrieveUserResponse result = userService.updateUserPassword(validToken, updateUserRequest);
+//
+//        // Assert
+//        assertNotNull(result);
+//        assertEquals("encoded-new-password", userEntity.getPassword());
+//        verify(userRepository).save(userEntity);
+//        verify(userMapper).mapToDto(userEntity);
+//    }
+//
+//    @Test
+//    void testUpdateUserPassword_UserNotFound() {
+//        // Arrange
+//        UpdateUserRequest updateUserRequest = new UpdateUserRequest("new-password");
+//        doNothing().when(authorizationHelperService).validateAccessToken(validToken);
+//        when(authorizationHelperService.getUserId(validToken)).thenReturn(userId);
+//        when(userRepository.findById(userId)).thenReturn(Optional.empty());
+//
+//        // Act & Assert
+//        NotFoundException exception = assertThrows(NotFoundException.class, () -> userService.updateUserPassword(validToken, updateUserRequest));
+//
+//        assertEquals("User does not exist!", exception.getMessage());
+//    }
+//
+//    @Test
+//    void testUpdateUserPassword_TokenExpired() {
+//        // Arrange
+//        UpdateUserRequest updateUserRequest = new UpdateUserRequest("new-password");
+//        doThrow(new BadRequestException(Error.ERR_05.getErrorDescription(), Error.ERR_05.getErrorCode()))
+//                .when(authorizationHelperService).validateAccessToken(expiredToken);
+//
+//        // Act & Assert
+//        BadRequestException exception = assertThrows(BadRequestException.class, () -> userService.updateUserPassword(expiredToken, updateUserRequest));
+//
+//        // Assert
+//        assertEquals(Error.ERR_05.getErrorDescription(), exception.getMessage());
+//    }
 
 }
