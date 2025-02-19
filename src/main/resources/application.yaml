@@ -28,6 +28,8 @@ spring:
 server:
   port: 8081
 
+allowed:
+  ips: 62.217.143.12
 
 application:
   security:

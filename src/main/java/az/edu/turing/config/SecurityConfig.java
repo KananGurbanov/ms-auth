@@ -3,7 +3,10 @@ package az.edu.turing.config;
 import az.edu.turing.auth.JwtAuthenticationFilter;
 import az.edu.turing.auth.JwtService;
 import az.edu.turing.dao.repository.UserRepository;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -17,6 +20,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import java.util.Arrays;
+import java.util.List;
 
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
@@ -38,6 +44,9 @@ public class SecurityConfig {
             "/swagger-ui/**",
             "/webjars/**",
             "/swagger-ui.html"};
+
+    @Value("${allowed.ips}") // Allowed IPs from properties
+    private String allowedIps;
 
     private final UserRepository userRepository;
 
@@ -67,12 +76,21 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(req -> req
-                        .requestMatchers(WHITE_LIST_URL).permitAll()
-                        .anyRequest().authenticated()
-                )
+                .authorizeHttpRequests(req -> req.anyRequest().authenticated()) // Restrict all endpoints
                 .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
-                .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore((request, response, chain) -> {
+                    HttpServletRequest httpRequest = (HttpServletRequest) request;
+                    String remoteIp = httpRequest.getRemoteAddr(); // Get client IP
+                    List<String> allowedIpList = Arrays.asList(allowedIps.split(","));
+
+                    if (!allowedIpList.contains(remoteIp)) {
+                        ((HttpServletResponse) response).sendError(HttpServletResponse.SC_FORBIDDEN, "Access Denied");
+                        return;
+                    }
+
+                    chain.doFilter(request, response);
+                }, JwtAuthenticationFilter.class); // IP restriction filter before authentication
 
         return http.build();
     }
